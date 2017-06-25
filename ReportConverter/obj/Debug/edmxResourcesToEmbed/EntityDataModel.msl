@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EDI_ReportConverterModelStoreContainer" CdmEntityContainer="EDI_ReportConverterEntities">
+    <EntitySetMapping Name="ReportHeaders">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.ReportHeader">
+        <MappingFragment StoreEntitySet="ReportHeader">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PartnerName" ColumnName="PartnerName" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="ReportType" ColumnName="ReportType" />
+          <ScalarProperty Name="ElementSeparator" ColumnName="ElementSeparator" />
+          <ScalarProperty Name="NewlineSeparator" ColumnName="NewlineSeparator" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ReportMappings">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.ReportMapping">
+        <MappingFragment StoreEntitySet="ReportMapping">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="ReportHeader_Id" ColumnName="ReportHeader_Id" />
+          <ScalarProperty Name="SegmentInitiator" ColumnName="SegmentInitiator" />
+          <ScalarProperty Name="SegmentLocation" ColumnName="SegmentLocation" />
+          <ScalarProperty Name="FieldName" ColumnName="FieldName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

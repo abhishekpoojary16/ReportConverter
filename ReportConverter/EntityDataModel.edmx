@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EDI_ReportConverterModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="EDI_ReportConverterModelStoreContainer">
+          <EntitySet Name="ReportHeader" EntityType="EDI_ReportConverterModel.Store.ReportHeader" store:Type="Tables" store:Schema="dbo" store:Name="ReportHeader">
+            <DefiningQuery>SELECT 
+      [ReportHeader].[Id] AS [Id], 
+      [ReportHeader].[PartnerName] AS [PartnerName], 
+      [ReportHeader].[Country] AS [Country], 
+      [ReportHeader].[ReportType] AS [ReportType], 
+      [ReportHeader].[ElementSeparator] AS [ElementSeparator], 
+      [ReportHeader].[NewlineSeparator] AS [NewlineSeparator]
+      FROM [dbo].[ReportHeader] AS [ReportHeader]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ReportMapping" EntityType="EDI_ReportConverterModel.Store.ReportMapping" store:Type="Tables" store:Schema="dbo" store:Name="ReportMapping">
+            <DefiningQuery>SELECT 
+      [ReportMapping].[Id] AS [Id], 
+      [ReportMapping].[ReportHeader_Id] AS [ReportHeader_Id], 
+      [ReportMapping].[SegmentInitiator] AS [SegmentInitiator], 
+      [ReportMapping].[SegmentLocation] AS [SegmentLocation], 
+      [ReportMapping].[FieldName] AS [FieldName]
+      FROM [dbo].[ReportMapping] AS [ReportMapping]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'EDI_ReportConverter.dbo.ReportHeader' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="ReportHeader">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PartnerName" Type="varchar" MaxLength="1000" />
+          <Property Name="Country" Type="varchar" MaxLength="100" />
+          <Property Name="ReportType" Type="varchar" MaxLength="100" />
+          <Property Name="ElementSeparator" Type="varchar" MaxLength="100" />
+          <Property Name="NewlineSeparator" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'EDI_ReportConverter.dbo.ReportMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="ReportMapping">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ReportHeader_Id" Type="int" />
+          <Property Name="SegmentInitiator" Type="varchar" MaxLength="100" />
+          <Property Name="SegmentLocation" Type="int" />
+          <Property Name="FieldName" Type="varchar" MaxLength="1000" />
+        </EntityType>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EDI_ReportConverterModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="EDI_ReportConverterEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="ReportHeaders" EntityType="EDI_ReportConverterModel.ReportHeader" />
+          <EntitySet Name="ReportMappings" EntityType="EDI_ReportConverterModel.ReportMapping" />
+        </EntityContainer>
+        <EntityType Name="ReportHeader">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="PartnerName" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+          <Property Name="Country" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="ReportType" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="ElementSeparator" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="NewlineSeparator" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="ReportMapping">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="ReportHeader_Id" Type="Int32" />
+          <Property Name="SegmentInitiator" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="SegmentLocation" Type="Int32" />
+          <Property Name="FieldName" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EDI_ReportConverterModelStoreContainer" CdmEntityContainer="EDI_ReportConverterEntities">
+          <EntitySetMapping Name="ReportHeaders">
+            <EntityTypeMapping TypeName="EDI_ReportConverterModel.ReportHeader">
+              <MappingFragment StoreEntitySet="ReportHeader">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PartnerName" ColumnName="PartnerName" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="ReportType" ColumnName="ReportType" />
+                <ScalarProperty Name="ElementSeparator" ColumnName="ElementSeparator" />
+                <ScalarProperty Name="NewlineSeparator" ColumnName="NewlineSeparator" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportMappings">
+            <EntityTypeMapping TypeName="EDI_ReportConverterModel.ReportMapping">
+              <MappingFragment StoreEntitySet="ReportMapping">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ReportHeader_Id" ColumnName="ReportHeader_Id" />
+                <ScalarProperty Name="SegmentInitiator" ColumnName="SegmentInitiator" />
+                <ScalarProperty Name="SegmentLocation" ColumnName="SegmentLocation" />
+                <ScalarProperty Name="FieldName" ColumnName="FieldName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

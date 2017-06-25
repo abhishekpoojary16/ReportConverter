@@ -1,0 +1,146 @@
+﻿@model ReportConverter.Models.ReportDetails
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link href="~/Content/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <script src="~/Content/js/bootstrap-editable.js"></script>
+    <script src="~/Content/js/typeaheadjs.js"></script>
+</head>
+<body>
+
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.DropDownListFor(m => m.Partner, new List<SelectListItem>
+                   { new SelectListItem{Text="India", Value="India"},
+                     new SelectListItem{Text="China", Value="China"},
+                     new SelectListItem{Text="Australia", Value="Australia"},
+                     new SelectListItem{Text="France", Value="France"},
+                     new SelectListItem{Text="Unites States", Value="Unites States"},
+                     new SelectListItem{Text="Russia", Value="Russia"},
+                     new SelectListItem{Text="Canada", Value="Canada"}},
+                     "Select Partner",
+                     new { @class = "col-md-3" })
+            
+            
+            @Html.DropDownListFor(m => m.Country, new List<SelectListItem>
+                   { new SelectListItem{Text="India", Value="India"},
+                     new SelectListItem{Text="China", Value="China"},
+                     new SelectListItem{Text="Australia", Value="Australia"},
+                     new SelectListItem{Text="France", Value="France"},
+                     new SelectListItem{Text="Unites States", Value="Unites States"},
+                     new SelectListItem{Text="Russia", Value="Russia"},
+                     new SelectListItem{Text="Canada", Value="Canada"}},
+                     "Select Country")
+            
+               @Html.DropDownListFor(m => m.ReportType, new List<SelectListItem>
+                   { new SelectListItem{Text="India", Value="India"},
+                     new SelectListItem{Text="China", Value="China"},
+                     new SelectListItem{Text="Australia", Value="Australia"},
+                     new SelectListItem{Text="France", Value="France"},
+                     new SelectListItem{Text="Unites States", Value="Unites States"},
+                     new SelectListItem{Text="Russia", Value="Russia"},
+                     new SelectListItem{Text="Canada", Value="Canada"}},
+                     "Select Report Type")
+            
+            <span>Select File:</span>
+            <input type="file" name="postedFile" />
+            <hr /> 
+            <p>Partner : </p>  @Html.TextBoxFor(m => m.Partner)
+                       
+            <p>Country : </p>  @Html.TextBoxFor(m => m.Country)  
+            
+            <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportType)
+                         
+            <p>Separator : </p>@Html.TextBoxFor(m => m.Separator)
+
+            <p>New Line Separator : </p>@Html.TextBoxFor(m => m.NewLineSeparator)
+            <br />
+            <br />
+            <input type="submit" value="Upload" />  
+        }
+        <hr />
+        <br />
+        
+        <br />
+        <hr />
+        <br />
+        New Preview :
+       
+        <div id="preview">
+            @{
+                if (ViewBag.LabelMatrix != null)
+                {
+                    int i = 0;
+                    int j = 0;
+                    foreach (var line in ViewBag.LabelMatrix)
+                    {
+                <row id=@(i)>
+                @{j = 0;}
+               @foreach (var label in line)
+               {
+                   <a href="#" id =@(j)>@label</a>
+                   @ViewBag.Separator
+                   { j++; }
+               } 
+               @{i++;}
+            </row>
+                <br />
+                    }
+                }
+            }
+        </div>
+
+        @Html.ActionLink("Save Mapping", "Save_Mapping", "Home", null, new { @class = "btn btn-default" })
+
+        @if (ViewBag.Save_Mapping_Confirmation != null)
+        {
+            <script>
+
+                $(document).ready(function () {
+
+                    alert('@ViewBag.Save_Mapping_Confirmation');
+
+    });
+            </script>
+        }     
+</body>
+
+<script>
+    $('#preview').editable({
+        selector: 'a',
+        validate: function (value) {
+            if ($.trim(value) == '') return 'This value is required.';
+        },
+        value: "",
+        //highlight: '#DAF7A6',
+        pk: "1",
+        url: '/home/xEditable/',
+        type: 'text',
+        title: 'What field is this ?',
+        contentType: 'application/json; charset=utf-8',
+        params: function (params) {
+            //var line = $(this).attr("id");
+            var data = {};
+            //$(this).css('color', 'green');
+            data['clicked_id'] = $(this).attr("id");
+            data['clicked_parentid'] = $(this).parent().attr("id");
+            data['value'] = params.value;
+            data: JSON.stringify(data);
+            return data;
+        },
+
+    });
+</script>
+
+</html>
