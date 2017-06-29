@@ -1,4 +1,4 @@
-﻿@model ReportConverter.Models.ReportDetails
+﻿@model ReportConverter.Models.BigViewModel
 
 @{
     Layout = null;
@@ -21,126 +21,63 @@
 
         @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
-            @Html.DropDownListFor(m => m.Partner, new List<SelectListItem>
-                   { new SelectListItem{Text="India", Value="India"},
-                     new SelectListItem{Text="China", Value="China"},
-                     new SelectListItem{Text="Australia", Value="Australia"},
-                     new SelectListItem{Text="France", Value="France"},
-                     new SelectListItem{Text="Unites States", Value="Unites States"},
-                     new SelectListItem{Text="Russia", Value="Russia"},
-                     new SelectListItem{Text="Canada", Value="Canada"}},
+            
+            
+            @Html.DropDownListFor(m => m.ReportHeader.PartnerName,Model.PartnerList,
                      "Select Partner",
-                     new { @class = "col-md-3" })
+                     new { @class = "col-md-3 col-md-offset-0" })
             
             
-            @Html.DropDownListFor(m => m.Country, new List<SelectListItem>
-                   { new SelectListItem{Text="India", Value="India"},
-                     new SelectListItem{Text="China", Value="China"},
-                     new SelectListItem{Text="Australia", Value="Australia"},
-                     new SelectListItem{Text="France", Value="France"},
-                     new SelectListItem{Text="Unites States", Value="Unites States"},
-                     new SelectListItem{Text="Russia", Value="Russia"},
-                     new SelectListItem{Text="Canada", Value="Canada"}},
-                     "Select Country")
+            @Html.DropDownListFor(m => m.ReportHeader.Country,new SelectList(Model.CountryList,"Text","Value"),
+                     "Select Country",
+                     new { @class = "col-md-3 col-md-offset-1" })
             
-               @Html.DropDownListFor(m => m.ReportType, new List<SelectListItem>
-                   { new SelectListItem{Text="India", Value="India"},
-                     new SelectListItem{Text="China", Value="China"},
-                     new SelectListItem{Text="Australia", Value="Australia"},
-                     new SelectListItem{Text="France", Value="France"},
-                     new SelectListItem{Text="Unites States", Value="Unites States"},
-                     new SelectListItem{Text="Russia", Value="Russia"},
-                     new SelectListItem{Text="Canada", Value="Canada"}},
-                     "Select Report Type")
+               @Html.DropDownListFor(m => m.ReportHeader.ReportType,Model.ReportTypeList,
+                     "Select Report Type",
+                     new { @class = "col-md-3 col-md-offset-1" })
             
-            <span>Select File:</span>
-            <input type="file" name="postedFile" />
-            <hr /> 
-            <p>Partner : </p>  @Html.TextBoxFor(m => m.Partner)
-                       
-            <p>Country : </p>  @Html.TextBoxFor(m => m.Country)  
-            
-            <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportType)
-                         
-            <p>Separator : </p>@Html.TextBoxFor(m => m.Separator)
-
-            <p>New Line Separator : </p>@Html.TextBoxFor(m => m.NewLineSeparator)
             <br />
             <br />
-            <input type="submit" value="Upload" />  
+            @*<span>Select File:</span>*@
+            <input type="file" name="postedFile"/>
+            
+            <br />
+            <input type="submit" value="Convert to Excel" />  
         }
+
+    <br />
+
+    @Html.ActionLink("Create New Mapping", "Index", "Mapping", null, new { @class = "btn btn-default" })
+
         <hr />
         <br />
         
-        <br />
-        <hr />
-        <br />
-        New Preview :
-       
-        <div id="preview">
-            @{
-                if (ViewBag.LabelMatrix != null)
-                {
-                    int i = 0;
-                    int j = 0;
-                    foreach (var line in ViewBag.LabelMatrix)
-                    {
-                <row id=@(i)>
-                @{j = 0;}
-               @foreach (var label in line)
-               {
-                   <a href="#" id =@(j)>@label</a>
-                   @ViewBag.Separator
-                   { j++; }
-               } 
-               @{i++;}
-            </row>
-                <br />
-                    }
-                }
-            }
-        </div>
+    @if (TempData["Message_NoFile"] != null)
+    {
+         <script>
+             $(document).ready(function () {
 
-        @Html.ActionLink("Save Mapping", "Save_Mapping", "Home", null, new { @class = "btn btn-default" })
+                 alert('@TempData["Message_NoFile"]');
 
-        @if (ViewBag.Save_Mapping_Confirmation != null)
-        {
-            <script>
+            });
+        </script>
+    }
 
-                $(document).ready(function () {
+    @if (TempData["Message_Save_Mapping_Confirmation"] != null)
+    {
+         <script>
+             $(document).ready(function () {
 
-                    alert('@ViewBag.Save_Mapping_Confirmation');
+                 alert('@TempData["Message_Save_Mapping_Confirmation"]');
 
-    });
-            </script>
-        }     
+             });
+        </script>
+    }
+
+
+  
+        
 </body>
 
-<script>
-    $('#preview').editable({
-        selector: 'a',
-        validate: function (value) {
-            if ($.trim(value) == '') return 'This value is required.';
-        },
-        value: "",
-        //highlight: '#DAF7A6',
-        pk: "1",
-        url: '/home/xEditable/',
-        type: 'text',
-        title: 'What field is this ?',
-        contentType: 'application/json; charset=utf-8',
-        params: function (params) {
-            //var line = $(this).attr("id");
-            var data = {};
-            //$(this).css('color', 'green');
-            data['clicked_id'] = $(this).attr("id");
-            data['clicked_parentid'] = $(this).parent().attr("id");
-            data['value'] = params.value;
-            data: JSON.stringify(data);
-            return data;
-        },
-
-    });
-</script>
 
 </html>

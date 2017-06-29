@@ -22,10 +22,10 @@ C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\System.We
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\System.Web.WebPages.xml
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\System.Web.WebPages.Deployment.xml
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\System.Web.WebPages.Razor.xml
-C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\obj\Debug\ReportConverter.csprojResolveAssemblyReference.cache
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\obj\Debug\ReportConverter.dll
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\obj\Debug\ReportConverter.pdb
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\EntityFramework.dll
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\EntityFramework.SqlServer.dll
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\EntityFramework.xml
 C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\bin\EntityFramework.SqlServer.xml
+C:\Users\inpooa01\Documents\GitHub\ReportConverter\ReportConverter\obj\Debug\ReportConverter.csprojResolveAssemblyReference.cache

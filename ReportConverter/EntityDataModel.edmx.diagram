@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="df9e64e0336846ad9ceee8d4b9ce4889" Name="Diagram1" ZoomLevel="10">
+      <Diagram DiagramId="df9e64e0336846ad9ceee8d4b9ce4889" Name="Diagram1" ZoomLevel="108">
         <EntityTypeShape EntityType="EDI_ReportConverterModel.ReportHeader" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="EDI_ReportConverterModel.ReportMapping" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
       </Diagram>

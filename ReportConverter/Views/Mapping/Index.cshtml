@@ -1,0 +1,122 @@
+﻿
+@model ReportConverter.Models.BigViewModel
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link href="~/Content/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <script src="~/Content/js/bootstrap-editable.js"></script>
+    <script src="~/Content/js/typeaheadjs.js"></script>
+</head>
+<body>
+
+    @using (Html.BeginForm("Index", "Mapping", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <span>Select File:</span>
+        <input type="file" name="postedFile" />
+        <hr /> 
+@*<p>Partner : </p>  @Html.TextBoxFor(m => m.Partner)
+                       
+            <p>Country : </p>  @Html.TextBoxFor(m => m.Country)  
+            
+            <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportType)             
+            *@
+        <p>Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.ElementSeparator)
+
+        <p>New Line Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.NewlineSeparator)
+        <br />
+        <br />
+        <input type="submit" value="Generate Preview" />  
+    }
+
+    <hr />
+
+    Click any field to start mapping :
+       
+        <div id="preview">
+            @{
+                if (ViewBag.LabelMatrix != null)
+                {
+                    int i = 0;
+                    int j = 0;
+                    foreach (var line in ViewBag.LabelMatrix)
+                    {
+                <row id=@(i)>
+                @{j = 0;}
+               @foreach (var label in line)
+               {
+                   <a href="#" id =@(j)>@label</a>
+                   @ViewBag.Separator
+                   { j++; }
+               } 
+               @{i++;}
+            </row>
+                <br />
+                    }
+                }
+            }
+        </div>
+
+    @using (Html.BeginForm("Save_Mapping", "Mapping", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+       
+        <p>Partner : </p>  @Html.TextBoxFor(m => m.ReportHeader.PartnerName)
+                       
+        <p>Country : </p>  @Html.TextBoxFor(m => m.ReportHeader.Country)  
+            
+        <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportHeader.ReportType)             
+            
+        <br />
+        <br />
+        <input type="submit" value="Save Mapping" />  
+    }
+
+
+    @*@Html.ActionLink("Save Mapping", "Save_Mapping", "Mapping", null, new { @class = "btn btn-default" })*@
+
+     @if (ViewBag.NoFileMessage != null)
+    {
+        <script>
+            $(document).ready(function () {
+
+                alert('@ViewBag.NoFileMessage');
+
+            });
+        </script>
+    }
+</body>
+
+<script>
+    $('#preview').editable({
+        selector: 'a',
+        validate: function (value) {
+            if ($.trim(value) == '') return 'This value is required.';
+        },
+        value: "",
+        //highlight: '#DAF7A6',
+        pk: "1",
+        url: '/Mapping/xEditable/',
+        type: 'text',
+        title: 'What field is this ?',
+        contentType: 'application/json; charset=utf-8',
+        params: function (params) {
+            //var line = $(this).attr("id");
+            var data = {};
+            //$(this).css('color', 'green');
+            data['clicked_id'] = $(this).attr("id");
+            data['clicked_parentid'] = $(this).parent().attr("id");
+            data['value'] = params.value;
+            data: JSON.stringify(data);
+            return data;
+        },
+
+    });
+</script>
+
+</html>
+

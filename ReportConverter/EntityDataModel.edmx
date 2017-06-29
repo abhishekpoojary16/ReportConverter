@@ -4,31 +4,11 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="EDI_ReportConverterModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="EDI_ReportConverterModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="EDI_ReportConverterModelStoreContainer">
-          <EntitySet Name="ReportHeader" EntityType="EDI_ReportConverterModel.Store.ReportHeader" store:Type="Tables" store:Schema="dbo" store:Name="ReportHeader">
-            <DefiningQuery>SELECT 
-      [ReportHeader].[Id] AS [Id], 
-      [ReportHeader].[PartnerName] AS [PartnerName], 
-      [ReportHeader].[Country] AS [Country], 
-      [ReportHeader].[ReportType] AS [ReportType], 
-      [ReportHeader].[ElementSeparator] AS [ElementSeparator], 
-      [ReportHeader].[NewlineSeparator] AS [NewlineSeparator]
-      FROM [dbo].[ReportHeader] AS [ReportHeader]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="ReportMapping" EntityType="EDI_ReportConverterModel.Store.ReportMapping" store:Type="Tables" store:Schema="dbo" store:Name="ReportMapping">
-            <DefiningQuery>SELECT 
-      [ReportMapping].[Id] AS [Id], 
-      [ReportMapping].[ReportHeader_Id] AS [ReportHeader_Id], 
-      [ReportMapping].[SegmentInitiator] AS [SegmentInitiator], 
-      [ReportMapping].[SegmentLocation] AS [SegmentLocation], 
-      [ReportMapping].[FieldName] AS [FieldName]
-      FROM [dbo].[ReportMapping] AS [ReportMapping]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="ReportHeader" EntityType="EDI_ReportConverterModel.Store.ReportHeader" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ReportMapping" EntityType="EDI_ReportConverterModel.Store.ReportMapping" store:Type="Tables" Schema="dbo" />
         </EntityContainer>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'EDI_ReportConverter.dbo.ReportHeader' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="ReportHeader">
           <Key>
             <PropertyRef Name="Id" />
@@ -40,9 +20,6 @@
           <Property Name="ElementSeparator" Type="varchar" MaxLength="100" />
           <Property Name="NewlineSeparator" Type="varchar" MaxLength="100" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'EDI_ReportConverter.dbo.ReportMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="ReportMapping">
           <Key>
             <PropertyRef Name="Id" />
@@ -53,8 +30,7 @@
           <Property Name="SegmentLocation" Type="int" />
           <Property Name="FieldName" Type="varchar" MaxLength="1000" />
         </EntityType>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="EDI_ReportConverterModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">

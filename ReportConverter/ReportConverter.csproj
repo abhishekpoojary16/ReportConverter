@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="EntityDataModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -138,8 +139,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\MappingParameters.cs" />
-    <Compile Include="Models\ReportDetails.cs" />
+    <Compile Include="Models\BigViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportHeader.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
@@ -211,6 +211,9 @@
       <DependentUpon>EntityDataModel.edmx</DependentUpon>
       <LastGenOutput>EntityDataModel.cs</LastGenOutput>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Mapping\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -12,33 +12,71 @@ namespace ReportConverter.Controllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Home/
-
-        //Session objects
-
-
-        List<string> SegmentInitiator = new List<string>();
-        List<int> SegmentLocation = new List<int>();
-        List<string> FieldName = new List<string>();
-
-        //string[][] LabelMatrix = new string[50][];
-
         public ActionResult Index()
         {
-            return View();
+            BigViewModel bigModel = new BigViewModel();
+            bigModel.PartnerList = PopulateList("Partner");
+            bigModel.CountryList = PopulateList("Country");
+            bigModel.ReportTypeList = PopulateList("ReportType");
+
+
+            return View(bigModel);
         }
 
-        
-        [HttpPost]
-        public ActionResult Index(HttpPostedFileBase postedFile, ReportDetails report)
+        private static List<SelectListItem> PopulateList(string attribute)
         {
-            //string strDDLValue = Request.Form["Country"].ToString();
+            EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities();
 
-            string Ctry = report.Country;
-            string RptType = report.ReportType;
-            char Separator = report.Separator;
-            string NewLineSeperator = report.NewLineSeparator;
+            List<String> DropdownList = new List<String>();
+
+            if (attribute == "Partner")
+            {
+                DropdownList = entity.ReportHeaders.Select(c => c.PartnerName).ToList();
+            }
+            else if (attribute == "Country")
+            {
+                DropdownList = entity.ReportHeaders.Select(c => c.Country).ToList();
+            }
+            else if (attribute == "ReportType")
+            {
+               DropdownList = entity.ReportHeaders.Select(c => c.ReportType).ToList();
+            }
+
+            //Removing null values from list
+
+            DropdownList.RemoveAll(c => c == null);
+
+            List<SelectListItem> item = DropdownList.ConvertAll(a =>
+            {
+                return new SelectListItem()
+                {
+                    Text = a.ToString(),
+                    Value = a.ToString(),
+                    Selected = false
+                };
+            });
+            return item;
+        }
+
+
+        [HttpPost]
+        public ActionResult Index(HttpPostedFileBase postedFile, BigViewModel report)
+        {
+            string P = report.ReportHeader.PartnerName;
+            string C = report.ReportHeader.Country;
+            string R = report.ReportHeader.ReportType;
+
+            //Fetch Separator and NewLineSeparator based on P,C,R
+            EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities();
+
+            ReportHeader reportHeader = entity.ReportHeaders.Where(x => x.PartnerName == P)
+                .Where(x => x.Country == C)
+                .Where(x => x.ReportType == R)
+                .Single();
+
+            string Separator = reportHeader.ElementSeparator;
+            string NewLineSeperator = reportHeader.NewlineSeparator;
+            int header_id = reportHeader.Id;
 
             //Separator input cleaning
             if (NewLineSeperator == "\\r\\n")
@@ -61,144 +99,114 @@ namespace ReportConverter.Controllers
                     result = System.Text.Encoding.UTF8.GetString(binData);
                 }
 
-                string[] resultArray = result.Split(new string[] { NewLineSeperator }, StringSplitOptions.None).Take(50).ToArray();
-
                 
+                //Get mapping rows from dbo.ReportMapping
 
-                string[][] LabelMatrix = CreateMatrix(resultArray, Separator);
+                var mappingRows = entity.ReportMappings.Where(x => x.ReportHeader_Id == header_id);
 
-                LabelMatrix = CreateMatrix(resultArray, Separator);
+                List<string> SegmentInitiator = new List<string>();
+                List<int> SegmentLocation = new List<int>();
+                List<string> FieldName = new List<string>();
 
-                Session["LabelMatrix"] = LabelMatrix;
 
-                ViewBag.LabelMatrix = LabelMatrix;
+                foreach (ReportMapping row in mappingRows)
+                {
+                    SegmentInitiator.Add(row.SegmentInitiator);
+                    SegmentLocation.Add((int)row.SegmentLocation);
+                    FieldName.Add(row.FieldName);
+                }
 
-                ViewBag.Separator = Separator;
+                string[] resultArray = result.Split(new string[] { NewLineSeperator }, StringSplitOptions.None);
 
-                //ViewBag.Preview = result.Remove(1000);    //Use this variable to display a plain preview 
-                
-                //ProcessTxtPRICAT(result, report);
+                Dictionary<string, List<string>> ListDict = Create_ListDictionary(resultArray, Separator, SegmentInitiator, SegmentLocation, FieldName);
+
+                DataTable dt = Create_Datatable(ListDict);
+
+                Create_CSV(dt);
             }
             else
             {
-                ViewBag.Message = "Please upload file.";
+                
+                TempData["Message_NoFile"] = "Please upload file";
             }
-            
-            return View();
 
-            //return RedirectToAction("Index");
+            //return View();
+
+            return RedirectToAction("Index");
         }
 
-        public string[][] CreateMatrix(string[] Array, char elementSeparator)
+
+        public Dictionary<string, List<string>> Create_ListDictionary(string[] resultArray, string Separator, List<string> SegmentInitiator_List, List<int> SegmentLocation_List, List<string> FieldName_List)
         {
-            string[][] jaggedArray = new string[Array.Length][];
+            //maintain lists in dictionary
+            Dictionary<string, List<string>> ListDict = new Dictionary<string, List<string>>();
 
-            string[] LabelArray = new string[] {};
-
-            for(int i=0; i< Array.Length;i++)
+            foreach (string field in FieldName_List)
             {
-                LabelArray = Array[i].Split(elementSeparator);
-                jaggedArray[i] = LabelArray;
+                ListDict.Add(field, new List<string>());
             }
 
-            return jaggedArray;
-        }
-
-        public void newMappingParameter(string RowIndex, string ColumnIndex)
-        {
-            int rIndex = Convert.ToInt32(RowIndex);
-            int cIndex = Convert.ToInt32(ColumnIndex);
-
-
-        }
-
-
-        public ActionResult Save_Mapping()
-        {
-            //Load from Session
-            if (Session["SegmentInitiator"] != null && Session["SegmentInitiator"] != null && Session["SegmentInitiator"] != null)
+            for (int i = 0; i < resultArray.Length; i++)
             {
-                SegmentInitiator = (List<string>)Session["SegmentInitiator"];
-                SegmentLocation = (List<int>)Session["SegmentLocation"];
-                FieldName = (List<string>)Session["FieldName"];
+                string SegmentInitiator = resultArray[i].Split(new string[] { Separator }, StringSplitOptions.None)[0];
+                bool b = SegmentInitiator_List.Any(SegmentInitiator.StartsWith);
+
+                if (b == true)
+                {
+                    //int index = SegmentInitiator_List.IndexOf(SegmentInitiator);
+
+                    var result = Enumerable.Range(0, SegmentInitiator_List.Count)
+             .Where(x => SegmentInitiator_List[x] == SegmentInitiator)
+             .ToList();
+
+                    foreach (int index in result)
+                    {
+                        int SegmentLocation = SegmentLocation_List[index];
+
+                        string FieldName = FieldName_List[index];
+
+                        ListDict[FieldName].Add(resultArray[i].Split(new string[] { Separator }, StringSplitOptions.None)[SegmentLocation]);
+                    }
+                }
             }
 
-            using (EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities())
-            {
-                //entity.ReportHeaders.Add();
-            }
-
-
-            //validate if ReportHeader fields present
-
-            ViewBag.Save_Mapping_Confirmation = "Mapping saved successfully!";
-
-            return View("Index");
+            return ListDict;
         }
 
-        //returns first segment of the given row
-        public string FetchSegment(int row_Number)
+        public DataTable Create_Datatable(Dictionary<string, List<string>> ListDict)
         {
-            string FirstSegment = "";
-            string[][] LabelMatrix = (string[][])Session["LabelMatrix"]; 
+            DataTable dt = new DataTable();
 
-            FirstSegment = LabelMatrix[row_Number][0];
-
-            return FirstSegment;
-        }
-
-        public void xEditable(string clicked_id, string clicked_parentid, string value)
-        {
-            //Load from Session
-            if (Session["SegmentInitiator"] != null && Session["SegmentInitiator"] != null && Session["SegmentInitiator"] != null)
+            foreach (string columnName in ListDict.Keys)
             {
-                SegmentInitiator = (List<string>)Session["SegmentInitiator"];
-                SegmentLocation = (List<int>)Session["SegmentLocation"];
-                FieldName = (List<string>)Session["FieldName"];
+                dt.Columns.Add(columnName);
             }
 
-            SegmentInitiator.Add(FetchSegment(Convert.ToInt32(clicked_parentid)));
-            SegmentLocation.Add(Convert.ToInt32(clicked_id));
-            FieldName.Add(value);
-
-            //Load into Session
-            Session["SegmentInitiator"] = SegmentInitiator;
-            Session["SegmentLocation"] = SegmentLocation;
-            Session["FieldName"] = FieldName;
-        }
-
-        //public void xEditable_json()
-        //{
-        //    string input = clicked_id;
-        //}
-
-
-        public void AddParameter(string ParamValue)
-        {
-            MappingParameters mp = new MappingParameters();
-            mp.ParamValue = ParamValue;
-        }
-
-        public void CreateNewModule(string EDIdata, ReportDetails report)
-        {
-            string Ctry = report.Country;
-            string RptType = report.ReportType;
-            char Separator = report.Separator;
-            string NewLineSeperator = report.NewLineSeparator;
-
-            if (NewLineSeperator == "\\r\\n")
+            for (int i = 0; i < ListDict[dt.Columns[0].ColumnName].Count; i++)
             {
-                NewLineSeperator = "\r\n";
+                DataRow row = dt.NewRow();
+             
+                int j=0;
+                foreach (List<string> field in ListDict.Values)
+                {
+                    try
+                    {
+                        row[j] = field[i];
+                        j++;
+                    }
+                    catch
+                    {
+                        row[j] = "";
+                        j++;
+                    }
+                }
+                dt.Rows.Add(row);
             }
 
-            if (NewLineSeperator == "\\n")
-            {
-                NewLineSeperator = "\n";
-            }
+            return dt;
         }
 
-
-        public void GenerateCsv(DataTable dt)
+        public void Create_CSV(DataTable dt)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -235,223 +243,7 @@ namespace ReportConverter.Controllers
 
         }
 
-        public void ProcessTxtPRICAT(string EDIdata, ReportDetails report)
-        {
-            #region Header sDeclare
-            StringBuilder sb = new StringBuilder();
-            string sResult = "";
-            string query = "";
-            string sCountry = "";
-            string CatalogNumber = "";
-            string MfrpnString = "";
-            string DescString = "";
-            DateTime Date = new DateTime();
-            int lineNum = 1;
-            char seperator, newlineSeperator;
-            #endregion
-
-            #region Line sDeclare
-            List<String> sLineNo = new List<String>();
-            List<String> IMSku = new List<String>();
-            List<String> sMaterialDescription = new List<String>();
-            List<String> sQuantity = new List<String>();
-            List<DateTime> DateList = new List<DateTime>();
-            List<String> MFRPN = new List<String>();
-            List<String> CatalogNumberList = new List<String>();
-            List<String> ContractPrice = new List<String>();
-            List<String> MFR_RetailPrice = new List<String>();
-
-            #endregion
-
-            try
-            {
-                string Ctry = report.Country;
-                string RptType = report.ReportType;
-                char Separator = report.Separator;
-                string NewLineSeperator = report.NewLineSeparator;
-
-                if (NewLineSeperator == "\\r\\n")
-                {
-                    NewLineSeperator = "\r\n";
-                }
-
-                if (NewLineSeperator == "\\n")
-                {
-                    NewLineSeperator = "\n";
-                }
-                
-
-                string[] LineArray = new string[] { };
-                string[] LineDetails = new string[] { };
-                string[] DetailArray = new String[] { };
-
-                sResult = EDIdata;
-
-
-                LineArray = sResult.Split(new string[] { NewLineSeperator }, StringSplitOptions.None);
-
-                for (int i = 0; i < LineArray.Length; i++)
-                {
-                    //Refresh variables
-                    DescString = "";
-
-                    if (LineArray[i].Contains("BCT" + Separator))
-                    {
-                        DetailArray = LineArray[i].Split(Separator);
-                        DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                        CatalogNumber = DetailArray[3];
-                        string temp = DetailArray[2].Insert(4, "/").Insert(7, "/");
-                        Date = Convert.ToDateTime(DetailArray[2].Insert(4, "/").Insert(7, "/"));
-                    }
-
-                    else if (LineArray[i].Contains("LIN" + Separator))
-                    {
-                        lineNum++;
-                        CatalogNumberList.Add(CatalogNumber);
-                        DateList.Add(Date);
-                        DetailArray = LineArray[i].Split(Separator);
-                        DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                        sLineNo.Add(DetailArray[1]);
-                        IMSku.Add(DetailArray[3]);
-                        MFRPN.Add(DetailArray[5]);
-                        MfrpnString = DetailArray[5];
-
-                        if (LineArray[i + 3].Contains("PID" + Separator))
-                        {
-                            DetailArray = LineArray[i + 3].Split(Separator);
-                            DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                            DescString = DetailArray[2].Replace(MfrpnString, "").Replace(",", "");
-
-                            //Multi-line Description check
-                            if (LineArray[i + 4].Contains("PID" + Separator))
-                            {
-                                DetailArray = LineArray[i + 4].Split(Separator);
-                                DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                DescString += " " + DetailArray[2].Replace(",", "");
-
-                                DetailArray = LineArray[i + 6].Split(Separator);
-                                DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                ContractPrice.Add(DetailArray[2]);
-                                //check for mfr Reatil price
-                                if (LineArray[i + 7].Contains("CTP" + Separator + Separator +"MSR"))
-                                {
-                                    DetailArray = LineArray[i + 7].Split(Separator);
-                                    DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                    MFR_RetailPrice.Add(DetailArray[2]);
-                                }
-                                else
-                                {
-                                    MFR_RetailPrice.Add("");
-                                }
-                            }
-                            else
-                            {
-                                DetailArray = LineArray[i + 5].Split(Separator);
-                                DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                ContractPrice.Add(DetailArray[2]);
-                                //check for mfr Reatil price
-                                if (LineArray[i + 6].Contains("CTP" + Separator + Separator + "MSR"))
-                                {
-                                    DetailArray = LineArray[i + 6].Split(Separator);
-                                    DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                    MFR_RetailPrice.Add(DetailArray[2]);
-                                }
-                                else
-                                {
-                                    MFR_RetailPrice.Add("");
-                                }
-                            }
-
-
-
-                            sMaterialDescription.Add(DescString);
-
-                        }
-                        else
-                        {
-                            DetailArray = LineArray[i + 4].Split(Separator);
-                            DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                            DescString = DetailArray[2].Replace(MfrpnString, "").Replace(",", "");
-
-                            //Multi-line Description check
-                            if (LineArray[i + 5].Contains("PID" + Separator))
-                            {
-                                DetailArray = LineArray[i + 5].Split(Separator);
-                                DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                DescString += " " + DetailArray[2].Replace(",", "");
-
-                                DetailArray = LineArray[i + 7].Split(Separator);
-                                DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                ContractPrice.Add(DetailArray[2]);
-                                //check for mfr Reatil price
-                                if (LineArray[i + 8].Contains("CTP" + Separator + Separator + "MSR"))
-                                {
-                                    DetailArray = LineArray[i + 8].Split(Separator);
-                                    DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                    MFR_RetailPrice.Add(DetailArray[2]);
-                                }
-                                else
-                                {
-                                    MFR_RetailPrice.Add("");
-                                }
-                            }
-
-                            else
-                            {
-                                DetailArray = LineArray[i + 6].Split(Separator);
-                                DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                ContractPrice.Add(DetailArray[2]);
-                                //check for mfr Reatil price
-                                if (LineArray[i + 7].Contains("CTP" + Separator + Separator + "MSR"))
-                                {
-                                    DetailArray = LineArray[i + 7].Split(Separator);
-                                    DetailArray = DetailArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                                    MFR_RetailPrice.Add(DetailArray[2]);
-                                }
-                                else
-                                {
-                                    MFR_RetailPrice.Add("");
-                                }
-                            }
-
-
-                            sMaterialDescription.Add(DescString);
-                        }
-                    }
-                }
-
-                DataTable dt = new DataTable();
-                //Define columns
-                dt.Columns.Add("Catalog_Number");
-                dt.Columns.Add("Row_Number");
-                dt.Columns.Add("Imsku");
-                dt.Columns.Add("Mfrpn");
-                dt.Columns.Add("MaterialDescription");
-                dt.Columns.Add("ContractPrice");
-                dt.Columns.Add("MFR_RetailPrice");
-                dt.Columns.Add("Date");
-                for (int i = 0; i < sLineNo.Count; i++)
-                {
-                    DataRow row = dt.NewRow();
-                    row[0] = CatalogNumberList[i];
-                    row[1] = sLineNo[i];
-                    row[2] = IMSku[i];
-                    row[3] = MFRPN[i];
-                    row[4] = sMaterialDescription[i].Replace("'", "");
-                    row[5] = ContractPrice[i];
-                    row[6] = MFR_RetailPrice[i];
-                    row[7] = DateList[i];
-                    dt.Rows.Add(row);
-                }
-
-                GenerateCsv(dt);
-            }
-
-            catch (Exception exc)
-            {
-                throw exc;
-            }
-        }
+        
 
     }
 }
