@@ -4,6 +4,8 @@
     <EntitySetMapping Name="ReportHeaders">
       <EntityTypeMapping TypeName="EDI_ReportConverterModel.ReportHeader">
         <MappingFragment StoreEntitySet="ReportHeader">
+          <ScalarProperty Name="EDI_FileType" ColumnName="EDI_FileType" />
+          <ScalarProperty Name="SubElementSeparator" ColumnName="SubElementSeparator" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="PartnerName" ColumnName="PartnerName" />
           <ScalarProperty Name="Country" ColumnName="Country" />
@@ -16,6 +18,7 @@
     <EntitySetMapping Name="ReportMappings">
       <EntityTypeMapping TypeName="EDI_ReportConverterModel.ReportMapping">
         <MappingFragment StoreEntitySet="ReportMapping">
+          <ScalarProperty Name="SegmentIdentifier_2" ColumnName="SegmentIdentifier_2" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="ReportHeader_Id" ColumnName="ReportHeader_Id" />
           <ScalarProperty Name="SegmentInitiator" ColumnName="SegmentInitiator" />

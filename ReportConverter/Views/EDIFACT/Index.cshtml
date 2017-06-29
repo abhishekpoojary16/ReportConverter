@@ -18,8 +18,9 @@
     <script src="~/Content/js/typeaheadjs.js"></script>
 </head>
 <body>
-    X12 Converter
-        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    EDIFACT Converter
+
+        @using (Html.BeginForm("Index", "EDIFACT", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             
             
@@ -47,10 +48,10 @@
 
     <br />
 
-    @Html.ActionLink("Create New Mapping", "Index", "Mapping", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Create New EDIFACT Mapping", "Index", "EDIFACTMapping", null, new { @class = "btn btn-default" })
 
 
-    @Html.ActionLink("Convert EDIFACT", "Index", "EDIFACT", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Convert X12", "Index", "HOME", null, new { @class = "btn btn-default" })
         <hr />
         <br />
         

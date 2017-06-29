@@ -14,6 +14,8 @@
     <Property Name="ReportType" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
     <Property Name="ElementSeparator" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
     <Property Name="NewlineSeparator" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Type="String" Name="SubElementSeparator" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="EDI_FileType" MaxLength="100" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="ReportMapping">
     <Key>
@@ -24,5 +26,6 @@
     <Property Name="SegmentInitiator" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
     <Property Name="SegmentLocation" Type="Int32" />
     <Property Name="FieldName" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+    <Property Type="String" Name="SegmentIdentifier_2" MaxLength="100" FixedLength="false" Unicode="false" />
   </EntityType>
 </Schema>

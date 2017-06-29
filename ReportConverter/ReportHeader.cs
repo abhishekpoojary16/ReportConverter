@@ -20,5 +20,7 @@ namespace ReportConverter
         public string ReportType { get; set; }
         public string ElementSeparator { get; set; }
         public string NewlineSeparator { get; set; }
+        public string SubElementSeparator { get; set; }
+        public string EDI_FileType { get; set; }
     }
 }

@@ -8,19 +8,21 @@ using System.Web.Mvc;
 
 namespace ReportConverter.Controllers
 {
-    public class MappingController : Controller
+    public class EDIFACTMappingController : Controller
     {
         //
-        // GET: /Mapping/
+        // GET: /EDIFACTMapping/
+
         List<string> SegmentInitiator = new List<string>();
         List<int> SegmentLocation = new List<int>();
         List<string> FieldName = new List<string>();
+        List<string> SegmentIdentifier_2 = new List<string>();
 
         public ActionResult Index()
         {
             //Clear previous session
             Session.Abandon();
-            
+
             return View();
         }
 
@@ -31,11 +33,13 @@ namespace ReportConverter.Controllers
 
             string Separator = bigModel.ReportHeader.ElementSeparator; //report.ElementSeparator;
             string NewLineSeperator = bigModel.ReportHeader.NewlineSeparator; //report.NewlineSeparator;
+            string SubElementSeparator = bigModel.ReportHeader.SubElementSeparator;
+
 
             //storing in session
             Session["ElementSeparator"] = Separator;
             Session["NewlineSeparator"] = NewLineSeperator;
-
+            Session["SubElementSeparator"] = SubElementSeparator;
 
             //Separator input cleaning
             if (NewLineSeperator == "\\r\\n")
@@ -62,7 +66,7 @@ namespace ReportConverter.Controllers
 
 
 
-                string[][] LabelMatrix = CreateMatrix(resultArray, Separator);
+                string[][] LabelMatrix = CreateMatrix(resultArray, Separator, SubElementSeparator);
 
                 //LabelMatrix = CreateMatrix(resultArray, Separator); //unwanted duplicate
 
@@ -82,20 +86,35 @@ namespace ReportConverter.Controllers
             }
 
             return View();
-            
+
             //return RedirectToAction("Index");
         }
 
-        public string[][] CreateMatrix(string[] Array, string elementSeparator)
+        public string[][] CreateMatrix(string[] Array, string elementSeparator, string subelementSeparator)
         {
             string[][] jaggedArray = new string[Array.Length][];
 
             string[] LabelArray = new string[] { };
 
+            string[] subArray = new string[] { };
+
+            List<string> superString = new List<string> { };
+
             for (int i = 0; i < Array.Length; i++)
             {
+                superString.Clear();
                 LabelArray = Array[i].Split(new string[] { elementSeparator }, StringSplitOptions.None);
-                jaggedArray[i] = LabelArray;
+                foreach (string element_1 in LabelArray)
+                {
+                    //split and merge based on subelement separator
+                    subArray = element_1.Split(new string[] { subelementSeparator }, StringSplitOptions.None);
+
+                    foreach (string element_2 in subArray)
+                    {
+                        superString.Add(element_2);
+                    }
+                }
+                jaggedArray[i] = superString.ToArray();
             }
 
             return jaggedArray;
@@ -106,6 +125,7 @@ namespace ReportConverter.Controllers
             ReportHeader header = new ReportHeader();
             header.ElementSeparator = (string)Session["ElementSeparator"];
             header.NewlineSeparator = (string)Session["NewlineSeparator"];
+            header.SubElementSeparator = (string)Session["SubElementSeparator"];
 
             header.Country = bigModel.ReportHeader.Country;
             header.PartnerName = bigModel.ReportHeader.PartnerName;
@@ -118,10 +138,11 @@ namespace ReportConverter.Controllers
                 SegmentInitiator = (List<string>)Session["SegmentInitiator"];
                 SegmentLocation = (List<int>)Session["SegmentLocation"];
                 FieldName = (List<string>)Session["FieldName"];
+                SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
             }
 
             using (EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities())
-            {         
+            {
                 entity.ReportHeaders.Add(header);
                 entity.SaveChanges();
                 int id = header.Id;
@@ -133,6 +154,7 @@ namespace ReportConverter.Controllers
                     mapping.SegmentInitiator = SegmentInitiator[i];
                     mapping.SegmentLocation = SegmentLocation[i];
                     mapping.FieldName = FieldName[i];
+                    mapping.SegmentIdentifier_2 = SegmentIdentifier_2[i];
 
                     entity.ReportMappings.Add(mapping);
                     entity.SaveChanges();
@@ -143,21 +165,27 @@ namespace ReportConverter.Controllers
             //validate if ReportHeader fields present (Make all ReportHeader fields mandatory)
 
             TempData["Message_Save_Mapping_Confirmation"] = "Mapping saved successfully!";
-            
+
 
             //return View("Index");
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "EDIFACT");
         }
 
-        //returns first segment of the given row
-        public string FetchSegment(int row_Number)
+        //returns corresponding Identifier of the given row
+        public string FetchSegment(int row_Number, int Segment_Number)
         {
-            string FirstSegment = "";
+            string Segment = "";
             string[][] LabelMatrix = (string[][])Session["LabelMatrix"];
 
-            FirstSegment = LabelMatrix[row_Number][0];
-
-            return FirstSegment;
+            if (Segment_Number == 0)
+            {
+                Segment = LabelMatrix[row_Number][0];
+            }
+            else if (Segment_Number == 1)
+            {
+                Segment = LabelMatrix[row_Number][1];
+            }
+            return Segment;
         }
 
         public void xEditable(string clicked_id, string clicked_parentid, string value)
@@ -168,17 +196,28 @@ namespace ReportConverter.Controllers
                 SegmentInitiator = (List<string>)Session["SegmentInitiator"];
                 SegmentLocation = (List<int>)Session["SegmentLocation"];
                 FieldName = (List<string>)Session["FieldName"];
+                SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
             }
 
-            SegmentInitiator.Add(FetchSegment(Convert.ToInt32(clicked_parentid)));
+            SegmentInitiator.Add(FetchSegment(Convert.ToInt32(clicked_parentid),0));
             SegmentLocation.Add(Convert.ToInt32(clicked_id));
             FieldName.Add(value);
+            
+            //No Second Identifier if segment is present in 0th or 1st position
+            if (Convert.ToInt32(clicked_id) < 2)
+            {
+                SegmentIdentifier_2.Add(null);
+            }
+            else
+            {
+                SegmentIdentifier_2.Add(FetchSegment(Convert.ToInt32(clicked_parentid), 1));
+            }
 
             //Load into Session
             Session["SegmentInitiator"] = SegmentInitiator;
             Session["SegmentLocation"] = SegmentLocation;
             Session["FieldName"] = FieldName;
+            Session["SegmentIdentifier_2"] = SegmentIdentifier_2;
         }
-
     }
 }

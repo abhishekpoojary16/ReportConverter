@@ -19,5 +19,6 @@ namespace ReportConverter
         public string SegmentInitiator { get; set; }
         public Nullable<int> SegmentLocation { get; set; }
         public string FieldName { get; set; }
+        public string SegmentIdentifier_2 { get; set; }
     }
 }

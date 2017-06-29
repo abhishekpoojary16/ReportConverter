@@ -14,6 +14,8 @@
     <Property Name="ReportType" Type="varchar" MaxLength="100" />
     <Property Name="ElementSeparator" Type="varchar" MaxLength="100" />
     <Property Name="NewlineSeparator" Type="varchar" MaxLength="100" />
+    <Property Name="SubElementSeparator" Type="varchar" MaxLength="100" />
+    <Property Name="EDI_FileType" Type="varchar" MaxLength="100" />
   </EntityType>
   <EntityType Name="ReportMapping">
     <Key>
@@ -24,5 +26,6 @@
     <Property Name="SegmentInitiator" Type="varchar" MaxLength="100" />
     <Property Name="SegmentLocation" Type="int" />
     <Property Name="FieldName" Type="varchar" MaxLength="1000" />
+    <Property Name="SegmentIdentifier_2" Type="varchar" MaxLength="100" />
   </EntityType>
 </Schema>
