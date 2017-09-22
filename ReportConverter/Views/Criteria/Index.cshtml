@@ -1,0 +1,80 @@
+﻿@model ReportConverter.Criterion
+
+<html>
+<head>
+    <title>Criteria</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="col-md-12">
+        <h2>Setup Inbound file details</h2>
+    </div>
+
+    <br />
+
+    @using (Html.BeginForm("ProcessForm", "Criteria", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="col-md-12">
+            <div class="col-md-1">Hostname :</div>
+            @Html.TextBoxFor(m => m.HostName, new { @class = "col-md-10", placeholder = "ftp://mercury.corporate.ingrammicro.com" })
+        </div>
+
+        
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <div class="col-md-12">
+            <div class="col-md-1">Username :</div>
+            @Html.TextBoxFor(m => m.UserName, new { @class = "col-md-10"})
+        </div>
+        
+        <br />
+        <br />
+        
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Password :</div>
+            @Html.TextBoxFor(m => m.Password, new { @class = "col-md-10"})
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-md-12">
+            <div class="col-md-1">FTP Directory :</div>
+            @Html.TextBoxFor(m => m.FTPDirectory, new { @class = "col-md-10", placeholder="/ddc/download/"})
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Local Directory :</div>
+            @Html.TextBoxFor(m => m.LocalDirectory, new { @class = "col-md-10"})
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Filename search criteria :</div>
+            @Html.TextBoxFor(m => m.Filename, new { @class = "col-md-10",placeholder="*keyword*"})
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-lg-12">
+            <input type="submit" value="Save" />
+        </div>
+    }
+
+    
+
+    
+</body>
+</html>

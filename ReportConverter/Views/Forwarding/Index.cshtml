@@ -1,0 +1,119 @@
+﻿@model ReportConverter.Forwarding
+
+<html>
+<head>
+    <title>Forwarding</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="col-md-12">
+        <h2>Email template</h2>
+    </div>
+
+    <br />
+
+    @using (Html.BeginForm("ProcessForm", "Forwarding", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="col-md-12">
+            <div class="col-md-1">Report variables :</div>
+            <div class="col-md-10">
+                @{
+                    var var_fieldname = Session["FieldName"];
+                    if (var_fieldname != null)
+                    {
+                        List<string> FieldName = new List<string> { };
+                        
+                        
+                        //Load from Session
+                        if (Session["FieldName"] != null)
+                        {
+                            FieldName = (List<string>)Session["FieldName"];               
+                        }
+                        for (int i = 0; i < FieldName.Count; i++)
+                        {
+                   <a class="btn btn-default" role="button" draggable="true" ondragstart="onDragStart(event)" id="@(FieldName[i])">@(FieldName[i])</a>
+                        }
+                    }
+                }
+                <a class="btn btn-default" id="TimeStamp" role="button" draggable="true" ondragstart="onDragStart(event)">TimeStamp</a>
+            </div>
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-md-12">
+            <div class="col-md-1">To :</div>
+            @Html.TextBoxFor(m => m.To_EmailId, new { @class = "col-md-10", placeholder = "(; separated)" })
+        </div>
+
+        
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <div class="col-md-12">
+            <div class="col-md-1">Cc :</div>
+            @Html.TextBoxFor(m => m.CC_EmailId, new { @class = "col-md-10", placeholder = "(; separated)" })
+        </div>
+        
+        <br />
+        <br />
+        
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Bcc :</div>
+            @Html.TextBoxFor(m => m.BCC_EmailId, new { @class = "col-md-10", placeholder = "(; separated)" })
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Subject :</div>
+            @Html.TextBoxFor(m => m.Email_Subject, new { @class = "col-md-10" })
+        </div>
+        
+        <br />
+        <br />
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Body :</div>
+            @Html.TextAreaFor(m => m.Email_Body, new { rows = "10", @class = "col-md-10" })
+        </div>
+        
+        
+        <br />
+        <br />
+        
+        <div class="col-lg-12">
+            <input type="submit" value="Save" />
+        </div>
+    }
+
+    <script>
+        //bug - onDragOver doesn't work more than once
+        var dropzone = document.getElementById('Email_Body')
+        var dropzone_2 = document.getElementById('Email_Subject')
+
+        function onDragStart(event) {
+            event.dataTransfer.setData("text", "#" + event.target.id); //cannot be empty string
+        }
+
+        function onDragOver(event) {
+            //event.preventDefault();
+            //var counter = document.getElementById('counter');
+            //counter.innerText = parseInt(counter.innerText, 10) + 1;
+            var data = event.dataTransfer.getData("text");
+            // alert(data);
+            //dropzone.innerText = event.dataTransfer.getData('text');
+        }
+
+        dropzone.addEventListener('dragover', onDragOver, false);
+        dropzone_2.addEventListener('dragover', onDragOver, false);
+    </script>
+</body>
+</html>

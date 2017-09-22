@@ -18,49 +18,56 @@
     <script src="~/Content/js/typeaheadjs.js"></script>
 </head>
 <body>
+    <br />
     EDIFACT Converter
+    <br />
+    <br />   
 
         @using (Html.BeginForm("Index", "EDIFACT", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             
             
-            @Html.DropDownListFor(m => m.ReportHeader.PartnerName,Model.PartnerList,
+            @Html.DropDownListFor(m => m.ReportHeader.PartnerName, Model.PartnerList,
                      "Select Partner",
-                     new { @class = "col-md-3 col-md-offset-0" })
+                     new { @class = "col-md-3  btn btn-default dropdown-toggle" })
             
             
-            @Html.DropDownListFor(m => m.ReportHeader.Country,new SelectList(Model.CountryList,"Text","Value"),
+            @Html.DropDownListFor(m => m.ReportHeader.Country, Model.CountryList,
                      "Select Country",
-                     new { @class = "col-md-3 col-md-offset-1" })
+                     new { @class = "col-md-3 col-md-offset-1 btn btn-default dropdown-toggle" })
             
-               @Html.DropDownListFor(m => m.ReportHeader.ReportType,Model.ReportTypeList,
+            @Html.DropDownListFor(m => m.ReportHeader.ReportType, Model.ReportTypeList,
                      "Select Report Type",
-                     new { @class = "col-md-3 col-md-offset-1" })
+                     new { @class = "col-md-3 col-md-offset-1 btn btn-default dropdown-toggle" })
             
             <br />
             <br />
-            @*<span>Select File:</span>*@
-            <input type="file" name="postedFile"/>
+            <br />
+@*<span>Select File:</span>*@
+            <input type="file" name="postedFile" />
             
             <br />
             <input type="submit" value="Convert to Excel" />  
         }
-
+    @*,onchange = "window.location.href='/EDIFACT/PopulateList1/?param=' + this.value;" }*@
     <br />
+
+
+    @Html.ActionLink("Update EDIFACT Mapping", "Index", "EDIFACTMapping", null, new { @class = "btn btn-default" })
 
     @Html.ActionLink("Create New EDIFACT Mapping", "Index", "EDIFACTMapping", null, new { @class = "btn btn-default" })
 
 
     @Html.ActionLink("Convert X12", "Index", "HOME", null, new { @class = "btn btn-default" })
-        <hr />
-        <br />
-        
+    <hr />
+    <br />
+
     @if (TempData["Message_NoFile"] != null)
     {
-         <script>
-             $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
 
-                 alert('@TempData["Message_NoFile"]');
+                alert('@TempData["Message_NoFile"]');
 
             });
         </script>
@@ -68,18 +75,22 @@
 
     @if (TempData["Message_Save_Mapping_Confirmation"] != null)
     {
-         <script>
-             $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
 
-                 alert('@TempData["Message_Save_Mapping_Confirmation"]');
+                alert('@TempData["Message_Save_Mapping_Confirmation"]');
 
-             });
+            });
         </script>
     }
 
+    <script>
+        $('#ddlPartnerName').on('change', function () {
+            alert('kjsad');
+        });
+    </script>
 
-  
-        
+
 </body>
 
 

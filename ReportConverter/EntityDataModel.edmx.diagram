@@ -4,9 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="df9e64e0336846ad9ceee8d4b9ce4889" Name="Diagram1" ZoomLevel="108">
+      <Diagram DiagramId="df9e64e0336846ad9ceee8d4b9ce4889" Name="Diagram1" ZoomLevel="80">
         <EntityTypeShape EntityType="EDI_ReportConverterModel.ReportHeader" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="EDI_ReportConverterModel.ReportMapping" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Criterion" Width="1.5" PointX="4.1441899389699985" PointY="9.5727192357055468" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Data_ACK" Width="1.5" PointX="3.9782956857133169" PointY="3.5380125956321193" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Forwarding" Width="1.5" PointX="6.625" PointY="9.25" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Master_Country" Width="1.5" PointX="8.7968973651513913" PointY="24.318336349128902" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Master_Partner" Width="1.5" PointX="7.6722950021141649" PointY="1.887615785881698" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Master_Report" Width="1.5" PointX="7.85461334318603" PointY="20.007306540388292" />
+        <EntityTypeShape EntityType="EDI_ReportConverterModel.Scheduler" Width="1.5" PointX="8.4774814362067179" PointY="16.20180191854099" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

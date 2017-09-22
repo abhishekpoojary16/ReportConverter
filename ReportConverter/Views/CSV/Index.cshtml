@@ -18,50 +18,49 @@
     <script src="~/Content/js/typeaheadjs.js"></script>
 </head>
 <body>
-    X12 Converter
-        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    CSV Converter
+
+        @using (Html.BeginForm("Index", "CSV", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             
             
-            @Html.DropDownListFor(m => m.ReportHeader.PartnerName,Model.PartnerList,
+            @Html.DropDownListFor(m => m.ReportHeader.PartnerName, Model.PartnerList,
                      "Select Partner",
-                     new { @class = "col-md-3 col-md-offset-0" })
+                     new { @class = "col-md-3 col-md-offset-1" })
             
             
-            @Html.DropDownListFor(m => m.ReportHeader.Country,new SelectList(Model.CountryList,"Text","Value"),
+            @Html.DropDownListFor(m => m.ReportHeader.Country, Model.CountryList,
                      "Select Country",
                      new { @class = "col-md-3 col-md-offset-1" })
             
-               @Html.DropDownListFor(m => m.ReportHeader.ReportType,Model.ReportTypeList,
+            @Html.DropDownListFor(m => m.ReportHeader.ReportType, Model.ReportTypeList,
                      "Select Report Type",
                      new { @class = "col-md-3 col-md-offset-1" })
             
             <br />
             <br />
-            @*<span>Select File:</span>*@
-            <input type="file" name="postedFile"/>
+@*<span>Select File:</span>*@
+            <input type="file" name="postedFile" />
             
             <br />
             <input type="submit" value="Convert to Excel" />  
         }
-
+    @*,onchange = "window.location.href='/EDIFACT/PopulateList1/?param=' + this.value;" }*@
     <br />
 
-    @Html.ActionLink("Create New Mapping", "Index", "Mapping", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Create New CSV Mapping", "Index", "CSVMapping", null, new { @class = "btn btn-default" })
 
 
-    @Html.ActionLink("Convert EDIFACT", "Index", "EDIFACT", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Convert X12", "Index", "HOME", null, new { @class = "btn btn-default" })
+    <hr />
+    <br />
 
-    @Html.ActionLink("Convert CSV", "Index", "CSV", null, new { @class = "btn btn-default" })
-        <hr />
-        <br />
-        
     @if (TempData["Message_NoFile"] != null)
     {
-         <script>
-             $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
 
-                 alert('@TempData["Message_NoFile"]');
+                alert('@TempData["Message_NoFile"]');
 
             });
         </script>
@@ -69,18 +68,15 @@
 
     @if (TempData["Message_Save_Mapping_Confirmation"] != null)
     {
-         <script>
-             $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
 
-                 alert('@TempData["Message_Save_Mapping_Confirmation"]');
+                alert('@TempData["Message_Save_Mapping_Confirmation"]');
 
-             });
+            });
         </script>
     }
 
-
-  
-        
 </body>
 
 

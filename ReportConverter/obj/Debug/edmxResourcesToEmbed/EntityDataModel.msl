@@ -27,5 +27,91 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Criteria">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Criterion">
+        <MappingFragment StoreEntitySet="Criteria">
+          <ScalarProperty Name="ReportHeader_Id" ColumnName="ReportHeader_Id" />
+          <ScalarProperty Name="Scheduler_Id" ColumnName="Scheduler_Id" />
+          <ScalarProperty Name="SeeburgerAgreement" ColumnName="SeeburgerAgreement" />
+          <ScalarProperty Name="Filename" ColumnName="Filename" />
+          <ScalarProperty Name="LocalDirectory" ColumnName="LocalDirectory" />
+          <ScalarProperty Name="FTPDirectory" ColumnName="FTPDirectory" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="HostName" ColumnName="HostName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Data_ACK">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Data_ACK">
+        <MappingFragment StoreEntitySet="Data_ACK">
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Filetype" ColumnName="Filetype" />
+          <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
+          <ScalarProperty Name="Control" ColumnName="Control" />
+          <ScalarProperty Name="Filename" ColumnName="Filename" />
+          <ScalarProperty Name="Ack_Date" ColumnName="Ack_Date" />
+          <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+          <ScalarProperty Name="Criteria_Id" ColumnName="Criteria_Id" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Forwardings">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Forwarding">
+        <MappingFragment StoreEntitySet="Forwarding">
+          <ScalarProperty Name="Email_Body" ColumnName="Email_Body" />
+          <ScalarProperty Name="Email_Subject" ColumnName="Email_Subject" />
+          <ScalarProperty Name="BCC_EmailId" ColumnName="BCC_EmailId" />
+          <ScalarProperty Name="Host" ColumnName="Host" />
+          <ScalarProperty Name="From_EmailId" ColumnName="From_EmailId" />
+          <ScalarProperty Name="CC_EmailId" ColumnName="CC_EmailId" />
+          <ScalarProperty Name="To_EmailId" ColumnName="To_EmailId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Master_Country">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Master_Country">
+        <MappingFragment StoreEntitySet="Master_Country">
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="CountryCode" ColumnName="CountryCode" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Master_Partner">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Master_Partner">
+        <MappingFragment StoreEntitySet="Master_Partner">
+          <ScalarProperty Name="Partner" ColumnName="Partner" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Master_Report">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Master_Report">
+        <MappingFragment StoreEntitySet="Master_Report">
+          <ScalarProperty Name="ReportDescription" ColumnName="ReportDescription" />
+          <ScalarProperty Name="ReportCode" ColumnName="ReportCode" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Schedulers">
+      <EntityTypeMapping TypeName="EDI_ReportConverterModel.Scheduler">
+        <MappingFragment StoreEntitySet="Scheduler">
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Country_ID" ColumnName="Country_ID" />
+          <ScalarProperty Name="Retry_Count" ColumnName="Retry_Count" />
+          <ScalarProperty Name="Retry_Interval" ColumnName="Retry_Interval" />
+          <ScalarProperty Name="Time" ColumnName="Time" />
+          <ScalarProperty Name="Forwarding_Id" ColumnName="Forwarding_Id" />
+          <ScalarProperty Name="ReportName" ColumnName="ReportName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

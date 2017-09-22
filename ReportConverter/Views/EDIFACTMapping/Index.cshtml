@@ -1,5 +1,4 @@
-﻿
-@model ReportConverter.Models.BigViewModel
+﻿@model ReportConverter.Models.BigViewModel
 <!DOCTYPE html>
 
 <html>
@@ -15,32 +14,48 @@
 </head>
 <body>
 
+    <br />
+
     @using (Html.BeginForm("Index", "EDIFACTMapping", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
-        <span>Select File:</span>
-        <input type="file" name="postedFile" />
-        <hr /> 
+        <div class="col-lg-12">
+            <span>Select File:</span>
+            <input type="file" name="postedFile" />
+        </div>
+        
+        <div class="col-lg-12">
+            <hr />
+        </div> 
 @*<p>Partner : </p>  @Html.TextBoxFor(m => m.Partner)
                        
             <p>Country : </p>  @Html.TextBoxFor(m => m.Country)  
             
             <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportType)             
             *@
-        <p>Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.ElementSeparator)
-
-        <p>New Line Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.NewlineSeparator)
-
-        <p>SubElement Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.SubElementSeparator)
-        <br />
-        <br />
-        <input type="submit" value="Generate Preview" />  
+        <div class="col-lg-3">
+            <p>Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.ElementSeparator)
+        </div>
+        <div class="col-lg-3">
+            <p>New Line Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.NewlineSeparator)
+        </div>
+        <div class="col-lg-3">
+            <p>SubElement Separator : </p>@Html.TextBoxFor(m => m.ReportHeader.SubElementSeparator)
+        </div>
+        
+        <div class="col-lg-3">
+            <input type="submit" value="Generate Preview" />
+        </div>
     }
 
-    <hr />
 
-    Click any field to start mapping :
-       
-        <div id="preview">
+    <div class="col-lg-12">
+        <hr />
+    </div>
+
+    <div class="col-lg-12">
+        <div id="preview" class="col-lg-6">
+            Click any field to start mapping :
+        <br />
             @{
                 if (ViewBag.LabelMatrix != null)
                 {
@@ -64,24 +79,51 @@
             }
         </div>
 
+        <div class="col-lg-6">
+            Preview table :
+        <br />
+            <div id="refTable" class="col-lg-5">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <hr />
+    </div>
+
+
     @using (Html.BeginForm("Save_Mapping", "EDIFACTMapping", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
-       
-        <p>Partner : </p>  @Html.TextBoxFor(m => m.ReportHeader.PartnerName)
-                       
-        <p>Country : </p>  @Html.TextBoxFor(m => m.ReportHeader.Country)  
+        <div class="col-lg-12">
+            <div class="col-lg-3">
+                <p>Partner : </p>
+                @Html.TextBoxFor(m => m.ReportHeader.PartnerName)
+            </div>
+
+            <div class="col-lg-3">
+                <p>Country : </p>
+                @Html.TextBoxFor(m => m.ReportHeader.Country)
+            </div>
+
+            <div class="col-lg-3">
+                <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportHeader.ReportType)
+            </div>
+
+            <div class="col-lg-3">
+                <input type="submit" value="Save Mapping" />
+            </div>
+        </div>
+        
+        <div class="col-lg-12">
             
-        <p>Report Type : </p>@Html.TextBoxFor(m => m.ReportHeader.ReportType)             
-            
-        <br />
-        <br />
-        <input type="submit" value="Save Mapping" />  
+        </div>
+        
     }
 
 
     @*@Html.ActionLink("Save Mapping", "Save_Mapping", "Mapping", null, new { @class = "btn btn-default" })*@
 
-     @if (ViewBag.NoFileMessage != null)
+    @if (ViewBag.NoFileMessage != null)
     {
         <script>
             $(document).ready(function () {
@@ -93,7 +135,7 @@
     }
 </body>
 
-<script>
+@*<script>
     $('#preview').editable({
         selector: 'a',
         validate: function (value) {
@@ -115,10 +157,46 @@
             data['value'] = params.value;
             data: JSON.stringify(data);
             return data;
-        },
-
+        }
     });
+</script>*@
+
+<script>
+    $(document).ready(function () {
+        $('#preview').editable({
+            selector: 'a',
+            validate: function (value) {
+                if ($.trim(value) == '') return 'This value is required.';
+            },
+            value: "",
+            //highlight: '#DAF7A6',
+            pk: "1",
+            url: '/EDIFACTMapping/xEditable/',
+            type: 'text',
+            title: 'What field is this ?',
+            contentType: 'application/json; charset=utf-8',
+            params: function (params) {
+                //var line = $(this).attr("id");
+                var data = {};
+                //$(this).css('color', 'green');
+                data['clicked_id'] = $(this).attr("id");
+                data['clicked_parentid'] = $(this).parent().attr("id");
+                data['value'] = params.value;
+                data: JSON.stringify(data);
+                return data;
+            },
+            success: updateTable
+        });
+
+        function updateTable(result) {
+            //alert(result);
+            $("#refTable").html(result);
+        }
+    });
+
+
 </script>
+
 
 </html>
 

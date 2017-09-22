@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Mapping Table</title>    
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link href="~/Content/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <script src="~/Content/js/bootstrap-editable.js"></script>
+    <script src="~/Content/js/typeaheadjs.js"></script>
+</head>
+<body>
+   <div id="preview table">
+        <table border="1">
+            <thead>
+                <tr>
+                    <td> FieldName </td>
+                    <td> SegmentLocation </td>
+                    <td> SegmentIdentifier 1 </td>
+                    <td> SegmentIdentifier 2 </td>
+                    <td> Update Mapping </td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var var_fieldname = Session["FieldName"];
+                    if (var_fieldname != null)
+                    {
+                        List<string> SegmentInitiator = new List<string> { };
+                        List<int> SegmentLocation = new List<int> { };
+                        List<string> FieldName = new List<string> { };
+                        List<string> SegmentIdentifier_2 = new List<string> { };
+                        
+                        //Load from Session
+                        if (Session["SegmentInitiator"] != null && Session["SegmentLocation"] != null && Session["FieldName"] != null)
+                        {
+                            SegmentInitiator = (List<string>)Session["SegmentInitiator"];
+                            SegmentLocation = (List<int>)Session["SegmentLocation"];
+                            FieldName = (List<string>)Session["FieldName"];
+                            SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];               
+                        }
+                        for (int i = 0; i < FieldName.Count; i++)
+                        {
+                    <tr id='@i'>
+                        <td>@(FieldName[i])</td>
+                        <td>@(SegmentLocation[i])</td>
+                        <td>@(SegmentInitiator[i])</td>
+                        <td>@(SegmentIdentifier_2[i])</td>
+                        <td><input type="button" value="Ignore SegmentIdentifier 2" onclick="CalltoAction_Ignore(@i);" /> <input type="button" value="Remove row" onclick="CalltoAction_Remove(@i);" /></td>
+                    </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+
+    <script>
+        function CalltoAction_Ignore(rowNumber) {
+            $.ajax({
+                url: '/EDIFACTMapping/Ignore_SegmentIdentifier2/',
+                data: { rowNumber: rowNumber },
+            }).done(function (result) {
+                $("#refTable").html(result);
+            });
+        }
+    </script>
+
+    <script>
+        function CalltoAction_Remove(rowNumber) {
+            $.ajax({
+                url: '/EDIFACTMapping/DeleteRow/',
+                data: { rowNumber: rowNumber },
+            }).done(function (result) {
+                $("#refTable").html(result);
+            });
+        }
+    </script>
+
+</html>

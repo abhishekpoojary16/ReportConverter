@@ -1,9 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="EDI_ReportConverterModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityContainer Name="EDI_ReportConverterModelStoreContainer">
+    <EntitySet Name="Criteria" EntityType="EDI_ReportConverterModel.Store.Criteria" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Data_ACK" EntityType="EDI_ReportConverterModel.Store.Data_ACK" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Forwarding" EntityType="EDI_ReportConverterModel.Store.Forwarding" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Master_Country" EntityType="EDI_ReportConverterModel.Store.Master_Country" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Master_Partner" EntityType="EDI_ReportConverterModel.Store.Master_Partner" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Master_Report" EntityType="EDI_ReportConverterModel.Store.Master_Report" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ReportHeader" EntityType="EDI_ReportConverterModel.Store.ReportHeader" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ReportMapping" EntityType="EDI_ReportConverterModel.Store.ReportMapping" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Scheduler" EntityType="EDI_ReportConverterModel.Store.Scheduler" store:Type="Tables" Schema="dbo" />
   </EntityContainer>
+  <EntityType Name="Criteria">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="HostName" Type="varchar" MaxLength="1000" />
+    <Property Name="UserName" Type="varchar" MaxLength="1000" />
+    <Property Name="Password" Type="varchar" MaxLength="1000" />
+    <Property Name="FTPDirectory" Type="varchar" MaxLength="1000" />
+    <Property Name="LocalDirectory" Type="varchar" MaxLength="1000" />
+    <Property Name="Filename" Type="varchar" MaxLength="1000" />
+    <Property Name="SeeburgerAgreement" Type="varchar" MaxLength="1000" />
+    <Property Name="Scheduler_Id" Type="int" />
+    <Property Name="ReportHeader_Id" Type="int" />
+  </EntityType>
+  <EntityType Name="Data_ACK">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Criteria_Id" Type="int" />
+    <Property Name="Timestamp" Type="datetime" />
+    <Property Name="Ack_Date" Type="datetime" />
+    <Property Name="Filename" Type="varchar" MaxLength="500" />
+    <Property Name="Control" Type="int" />
+    <Property Name="ActionCode" Type="int" />
+    <Property Name="Filetype" Type="varchar" MaxLength="50" />
+    <Property Name="Status" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Forwarding">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="To_EmailId" Type="varchar" MaxLength="5000" />
+    <Property Name="CC_EmailId" Type="varchar" MaxLength="1000" />
+    <Property Name="From_EmailId" Type="varchar" MaxLength="500" />
+    <Property Name="Host" Type="varchar" MaxLength="100" />
+    <Property Name="BCC_EmailId" Type="varchar" MaxLength="1000" />
+    <Property Name="Email_Subject" Type="varchar" MaxLength="1000" />
+    <Property Name="Email_Body" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="Master_Country">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Country" Type="varchar" MaxLength="1000" />
+    <Property Name="CountryCode" Type="varchar" MaxLength="100" />
+    <Property Name="TimeZone" Type="bigint" />
+  </EntityType>
+  <EntityType Name="Master_Partner">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Partner" Type="varchar" MaxLength="1000" />
+  </EntityType>
+  <EntityType Name="Master_Report">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ReportCode" Type="varchar" MaxLength="100" />
+    <Property Name="ReportDescription" Type="varchar" MaxLength="1000" />
+  </EntityType>
   <EntityType Name="ReportHeader">
     <Key>
       <PropertyRef Name="Id" />
@@ -27,5 +100,18 @@
     <Property Name="SegmentLocation" Type="int" />
     <Property Name="FieldName" Type="varchar" MaxLength="1000" />
     <Property Name="SegmentIdentifier_2" Type="varchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="Scheduler">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ReportName" Type="varchar" MaxLength="1000" />
+    <Property Name="Forwarding_Id" Type="int" />
+    <Property Name="Time" Type="varchar" MaxLength="500" />
+    <Property Name="Retry_Interval" Type="int" />
+    <Property Name="Retry_Count" Type="int" />
+    <Property Name="Country_ID" Type="int" />
+    <Property Name="Status" Type="int" />
   </EntityType>
 </Schema>

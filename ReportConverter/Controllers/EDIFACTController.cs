@@ -26,6 +26,8 @@ namespace ReportConverter.Controllers
             return View(bigModel);
         }
 
+
+
         private static List<SelectListItem> PopulateList(string attribute)
         {
             EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities();
@@ -34,15 +36,15 @@ namespace ReportConverter.Controllers
 
             if (attribute == "Partner")
             {
-                DropdownList = entity.ReportHeaders.Select(c => c.PartnerName).ToList();
+                DropdownList = entity.ReportHeaders.Select(c => c.PartnerName).Distinct().ToList();
             }
             else if (attribute == "Country")
             {
-                DropdownList = entity.ReportHeaders.Select(c => c.Country).ToList();
+                DropdownList = entity.ReportHeaders.Select(c => c.Country).Distinct().ToList();
             }
             else if (attribute == "ReportType")
             {
-                DropdownList = entity.ReportHeaders.Select(c => c.ReportType).ToList();
+                DropdownList = entity.ReportHeaders.Select(c => c.ReportType).Distinct().ToList();
             }
 
             //Removing null values from list
@@ -61,6 +63,53 @@ namespace ReportConverter.Controllers
             return item;
         }
 
+        public ActionResult FilterbyPartner(string Value)
+        {
+            /*
+            TO DO -
+             * 
+             * 
+             This function returns cascaded drop down
+             */
+            EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities();
+
+            List<String> DropdownList = new List<String>();
+
+            DropdownList = entity.ReportHeaders.Where(P => P.PartnerName == Value).Select(c => c.PartnerName).ToList();
+
+            //if (attribute == "Partner")
+            //{
+            //    DropdownList = entity.ReportHeaders.Select(c => c.PartnerName).ToList();
+            //}
+            //else if (attribute == "Country")
+            //{
+            //    //DropdownList = entity.ReportHeaders.Where(c=>c.PartnerName == partnername).Select(c => c.Country).ToList();
+            //}
+            //else if (attribute == "ReportType")
+            //{
+            //    DropdownList = entity.ReportHeaders.Select(c => c.ReportType).ToList();
+            //}
+
+            //Removing null values from list
+
+            DropdownList.RemoveAll(c => c == null);
+
+            List<SelectListItem> item = DropdownList.ConvertAll(a =>
+            {
+                return new SelectListItem()
+                {
+                    Text = a.ToString(),
+                    Value = a.ToString(),
+                    Selected = false
+                };
+            });
+            //return View("Index");
+
+            BigViewModel bigModel = new BigViewModel();
+
+
+            return RedirectToAction("Index", bigModel);
+        }
 
         [HttpPost]
         public ActionResult Index(HttpPostedFileBase postedFile, BigViewModel report)
@@ -143,6 +192,8 @@ namespace ReportConverter.Controllers
 
         public string[] Generate_superString(string[] parentString, string Splitter)
         {
+            //Code block does what CreateMatrix() did in EDIFACTMapping
+
             string[] superString = new string[] { };
             string[] subArray = new string[] { };
             List<string> superString_List = new List<string> { };
@@ -163,11 +214,15 @@ namespace ReportConverter.Controllers
 
         public Dictionary<string, List<string>> Create_ListDictionary(string[] resultArray, string Separator, List<string> SegmentInitiator_List, List<int> SegmentLocation_List, List<string> FieldName_List, List<string> SegmentIdentifier_2_List, string SubElementSeparator)
         {
-            //maintain lists in dictionary
+            /*
+            This function returns a Dictionary of lists. All lists created dynamically at runtime.
+            */
+
             Dictionary<string, List<string>> ListDict = new Dictionary<string, List<string>>();
 
             foreach (string field in FieldName_List)
             {
+                //Adding a new list for each mapping field.
                 ListDict.Add(field, new List<string>());
             }
 
@@ -177,32 +232,45 @@ namespace ReportConverter.Controllers
 
             for (int i = 0; i < resultArray.Length; i++)
             {
-                //string[] superString = Generate_superString(resultArray[i], SubElementSeparator);
-
                 LabelArray = resultArray[i].Split(new string[] { Separator }, StringSplitOptions.None);
 
                 string SegmentInitiator = LabelArray[0];
+
+                //Returns true if line starts with any SegmentIdentifier present in SegmentInitiator_List (First check)
                 bool b = SegmentInitiator_List.Any(SegmentInitiator.StartsWith);
 
                 if (b == true)
                 {
                     superString = Generate_superString(LabelArray, SubElementSeparator);
 
+                    //Returns multiple indexes in SegmentInitiator_List where SegmentIdentifier was found 
                     var result = Enumerable.Range(0, SegmentInitiator_List.Count)
              .Where(x => SegmentInitiator_List[x] == SegmentInitiator)
              .ToList();
 
                     foreach (int index in result)
                     {
+                        //Getting corresponding SegmentIdentifier_2 (Second check)
                         string SegmentIdentifier_2 = SegmentIdentifier_2_List[index];
 
-                        if (SegmentIdentifier_2 == superString[1] || SegmentIdentifier_2 == null)
+                        if (SegmentIdentifier_2 == superString[1] || SegmentIdentifier_2 == null) //checking for null second identifier for special case where the field is situated in 0th or 1st segment
                         {
-                            int SegmentLocation = SegmentLocation_List[index];
+                           
+                                int SegmentLocation = SegmentLocation_List[index];
 
-                            string FieldName = FieldName_List[index];
+                                string FieldName = FieldName_List[index];
+                             try
+                            {
+                               // Debugging helper
+                                //"field to be searched" = superString[SegmentLocation];
 
-                            ListDict[FieldName].Add(superString[SegmentLocation]);
+                                ListDict[FieldName].Add(superString[SegmentLocation].Replace(","," "));
+                            }
+                            catch
+                            {
+                                //handles null pointer exception in case of data inconsistency
+                                ListDict[FieldName].Add("#ERROR");
+                            }
                         }
                     }
                 }
@@ -234,6 +302,7 @@ namespace ReportConverter.Controllers
                     }
                     catch
                     {
+                        //handles null pointer exception in case of data inconsistency
                         row[j] = "";
                         j++;
                     }

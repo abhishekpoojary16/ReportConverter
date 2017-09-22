@@ -27,5 +27,12 @@ namespace ReportConverter
     
         public DbSet<ReportHeader> ReportHeaders { get; set; }
         public DbSet<ReportMapping> ReportMappings { get; set; }
+        public DbSet<Criterion> Criteria { get; set; }
+        public DbSet<Data_ACK> Data_ACK { get; set; }
+        public DbSet<Forwarding> Forwardings { get; set; }
+        public DbSet<Master_Country> Master_Country { get; set; }
+        public DbSet<Master_Partner> Master_Partner { get; set; }
+        public DbSet<Master_Report> Master_Report { get; set; }
+        public DbSet<Scheduler> Schedulers { get; set; }
     }
 }

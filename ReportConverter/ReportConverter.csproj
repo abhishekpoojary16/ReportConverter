@@ -118,11 +118,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CriteriaController.cs" />
+    <Compile Include="Controllers\CSVController.cs" />
+    <Compile Include="Controllers\CSVMappingController.cs" />
     <Compile Include="Controllers\EDIFACTController.cs" />
     <Compile Include="Controllers\EDIFACTMappingController.cs" />
+    <Compile Include="Controllers\ForwardingController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
+    <Compile Include="Controllers\SchedulerController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Criterion.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data_ACK.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="EntityDataModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -138,8 +150,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EntityDataModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Forwarding.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Master_Country.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Master_Partner.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Master_Report.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BigViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -149,24 +173,33 @@
     <Compile Include="ReportMapping.cs">
       <DependentUpon>EntityDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Scheduler.cs">
+      <DependentUpon>EntityDataModel.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="Content\css\bootstrap-clockpicker.min.css" />
     <Content Include="Content\css\bootstrap-editable.css" />
+    <Content Include="Content\js\bootstrap-clockpicker.min.js" />
     <Content Include="Content\js\bootstrap-editable.js" />
     <Content Include="Content\js\bootstrap-editable.min.js" />
     <Content Include="Content\js\typeaheadjs.js" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -222,6 +255,27 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\EDIFACTMapping\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CSV\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CSVMapping\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_DisplayMapping.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Landing\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Scheduler\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Forwarding\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Criteria\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

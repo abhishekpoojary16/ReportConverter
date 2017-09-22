@@ -62,9 +62,8 @@ namespace ReportConverter.Controllers
                     result = System.Text.Encoding.UTF8.GetString(binData);
                 }
 
+                //Take(50) -- Only first 50 rows of the file in the mapping Preview
                 string[] resultArray = result.Split(new string[] { NewLineSeperator }, StringSplitOptions.None).Take(50).ToArray();
-
-
 
                 string[][] LabelMatrix = CreateMatrix(resultArray, Separator, SubElementSeparator);
 
@@ -92,6 +91,10 @@ namespace ReportConverter.Controllers
 
         public string[][] CreateMatrix(string[] Array, string elementSeparator, string subelementSeparator)
         {
+            /*
+            This function returns a Jagged Array(All rows need not have same number of columns, unlike two-dimensional array) which is displayed as Preview 
+             */
+
             string[][] jaggedArray = new string[Array.Length][];
 
             string[] LabelArray = new string[] { };
@@ -131,6 +134,9 @@ namespace ReportConverter.Controllers
             header.PartnerName = bigModel.ReportHeader.PartnerName;
             header.ReportType = bigModel.ReportHeader.ReportType;
 
+            //Insert through EDIFACTMapping
+            header.EDI_FileType = "EDIFACT"; 
+
 
             //Load from Session
             if (Session["SegmentInitiator"] != null && Session["SegmentLocation"] != null && Session["FieldName"] != null)
@@ -141,11 +147,12 @@ namespace ReportConverter.Controllers
                 SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
             }
 
+            int id;
             using (EDI_ReportConverterEntities entity = new EDI_ReportConverterEntities())
             {
                 entity.ReportHeaders.Add(header);
                 entity.SaveChanges();
-                int id = header.Id;
+                id = header.Id;
 
                 for (int i = 0; i < SegmentInitiator.Count; i++)
                 {
@@ -166,9 +173,11 @@ namespace ReportConverter.Controllers
 
             TempData["Message_Save_Mapping_Confirmation"] = "Mapping saved successfully!";
 
+            Session["ReportheaderID"] = id; // Saving id in session. To be used in CriteriaController. Passing data as parameter to RedirecttoAction doesn't work
 
             //return View("Index");
-            return RedirectToAction("Index", "EDIFACT");
+            //return RedirectToAction("Index", "EDIFACT");  //redirects to upload and convert page
+            return RedirectToAction("Index", "Criteria"); // creating a new criteria that uses the given map header id 
         }
 
         //returns corresponding Identifier of the given row
@@ -177,10 +186,12 @@ namespace ReportConverter.Controllers
             string Segment = "";
             string[][] LabelMatrix = (string[][])Session["LabelMatrix"];
 
+            //returns first identifier in the given row
             if (Segment_Number == 0)
             {
                 Segment = LabelMatrix[row_Number][0];
             }
+            //returns second identifier in the given row
             else if (Segment_Number == 1)
             {
                 Segment = LabelMatrix[row_Number][1];
@@ -188,10 +199,48 @@ namespace ReportConverter.Controllers
             return Segment;
         }
 
-        public void xEditable(string clicked_id, string clicked_parentid, string value)
+        //public void xEditable(string clicked_id, string clicked_parentid, string value)
+        //{
+        //    //Load from Session
+        //    if (Session["SegmentInitiator"] != null && Session["SegmentLocation"] != null && Session["FieldName"] != null)
+        //    {
+        //        SegmentInitiator = (List<string>)Session["SegmentInitiator"];
+        //        SegmentLocation = (List<int>)Session["SegmentLocation"];
+        //        FieldName = (List<string>)Session["FieldName"];
+        //        SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
+        //    }
+
+        //    string segmentname = FetchSegment(Convert.ToInt32(clicked_parentid),0);
+
+        //    SegmentInitiator.Add(segmentname);
+        //    SegmentLocation.Add(Convert.ToInt32(clicked_id));
+        //    FieldName.Add(value);
+            
+        //    //No Second Identifier if segment is present in 0th or 1st position
+        //    if (Convert.ToInt32(clicked_id) < 2)
+        //    {
+        //        SegmentIdentifier_2.Add(null);
+        //    }
+        //    else if(segmentname == "LIN") // Create an ExcludedSegments table
+        //    {
+        //        SegmentIdentifier_2.Add(null);
+        //    }
+        //    else
+        //    {
+        //        SegmentIdentifier_2.Add(FetchSegment(Convert.ToInt32(clicked_parentid), 1));
+        //    }
+
+        //    //Load into Session
+        //    Session["SegmentInitiator"] = SegmentInitiator;
+        //    Session["SegmentLocation"] = SegmentLocation;
+        //    Session["FieldName"] = FieldName;
+        //    Session["SegmentIdentifier_2"] = SegmentIdentifier_2;
+        //}
+
+        public ActionResult xEditable(string clicked_id, string clicked_parentid, string value)
         {
             //Load from Session
-            if (Session["SegmentInitiator"] != null && Session["SegmentInitiator"] != null && Session["SegmentInitiator"] != null)
+            if (Session["SegmentInitiator"] != null && Session["SegmentLocation"] != null && Session["FieldName"] != null)
             {
                 SegmentInitiator = (List<string>)Session["SegmentInitiator"];
                 SegmentLocation = (List<int>)Session["SegmentLocation"];
@@ -199,12 +248,18 @@ namespace ReportConverter.Controllers
                 SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
             }
 
-            SegmentInitiator.Add(FetchSegment(Convert.ToInt32(clicked_parentid),0));
+            string segmentname = FetchSegment(Convert.ToInt32(clicked_parentid), 0);
+
+            SegmentInitiator.Add(segmentname);
             SegmentLocation.Add(Convert.ToInt32(clicked_id));
             FieldName.Add(value);
-            
+
             //No Second Identifier if segment is present in 0th or 1st position
             if (Convert.ToInt32(clicked_id) < 2)
+            {
+                SegmentIdentifier_2.Add(null);
+            }
+            else if (segmentname == "LIN") // Create an ExcludedSegments table
             {
                 SegmentIdentifier_2.Add(null);
             }
@@ -218,6 +273,61 @@ namespace ReportConverter.Controllers
             Session["SegmentLocation"] = SegmentLocation;
             Session["FieldName"] = FieldName;
             Session["SegmentIdentifier_2"] = SegmentIdentifier_2;
+
+            return PartialView("_DisplayMapping");
         }
+
+        public ActionResult Ignore_SegmentIdentifier2(int rowNumber)
+        {
+            //Load from Session
+            if (Session["SegmentInitiator"] != null && Session["SegmentLocation"] != null && Session["FieldName"] != null)
+            {
+                SegmentInitiator = (List<string>)Session["SegmentInitiator"];
+                SegmentLocation = (List<int>)Session["SegmentLocation"];
+                FieldName = (List<string>)Session["FieldName"];
+                SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
+            }
+
+            //Remove the requested entry
+            SegmentIdentifier_2[rowNumber] = null;
+
+            //Load into Session
+            Session["SegmentInitiator"] = SegmentInitiator;
+            Session["SegmentLocation"] = SegmentLocation;
+            Session["FieldName"] = FieldName;
+            Session["SegmentIdentifier_2"] = SegmentIdentifier_2;
+
+            //return View("Index");
+            return PartialView("_DisplayMapping");
+        }
+
+        public ActionResult DeleteRow(int rowNumber)
+        {
+            //Load from Session
+            if (Session["SegmentInitiator"] != null && Session["SegmentLocation"] != null && Session["FieldName"] != null)
+            {
+                SegmentInitiator = (List<string>)Session["SegmentInitiator"];
+                SegmentLocation = (List<int>)Session["SegmentLocation"];
+                FieldName = (List<string>)Session["FieldName"];
+                SegmentIdentifier_2 = (List<string>)Session["SegmentIdentifier_2"];
+            }
+
+            //Remove the requested entry
+            SegmentInitiator.RemoveAt(rowNumber);
+            SegmentLocation.RemoveAt(rowNumber);
+            FieldName.RemoveAt(rowNumber);
+            SegmentIdentifier_2.RemoveAt(rowNumber);
+
+
+            //Load into Session
+            Session["SegmentInitiator"] = SegmentInitiator;
+            Session["SegmentLocation"] = SegmentLocation;
+            Session["FieldName"] = FieldName;
+            Session["SegmentIdentifier_2"] = SegmentIdentifier_2;
+
+            //return View("Index");
+            return PartialView("_DisplayMapping");
+        }
+
     }
 }

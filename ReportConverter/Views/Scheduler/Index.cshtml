@@ -1,0 +1,110 @@
+﻿@model ReportConverter.Scheduler
+
+@{
+    ViewBag.Title = "Index";
+}
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <!-- ClockPicker Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="~/Content/css/bootstrap-clockpicker.min.css">
+    <!-- ClockPicker script -->
+    <script type="text/javascript" src="~/Content/js/bootstrap-clockpicker.min.js"></script>
+</head>
+<body>
+    <div class="col-md-12">
+        <h2>Scheduler</h2>
+    </div>
+    <hr />
+    <br />
+    <br />
+    <!-- Input group, just add class 'clockpicker', and optional data-* -->
+    <div class="col-md-4">
+        <label>
+            <input type="checkbox" name="checkbox" value="value">Send report as soon as it's generated</label>
+    </div>
+
+ @*   <div class="col-md-8 text-muted">
+        <div class="col-md-3">
+            Report Time :
+    <div class="input-group clockpicker" data-placement="right" data-align="top" data-autoclose="true" data-twelvehour="true">
+        <input id="timeString" type="text" class="form-control" value="09:00">
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-time"></span>
+        </span>
+    </div>
+        </div>
+
+
+        <div class="col-md-3">
+            UTC Time Zone :
+             <div class="input-group">
+                 <span class="input-group-addon" id="btnGroupAddon">Country</span>
+                 <label class="form-control" aria-describedby="btnGroupAddon">UTC Time </label>
+             </div>
+        </div>
+
+        <div class="col-md-3">
+            Retry Interval :
+        <input type="text" id="retryCounter" class="form-control" />
+        </div>
+    </div>
+
+
+    <hr />
+    <br />
+
+    <div class="col-md-12">
+        <input type="button" value="Save" onclick="CalltoAction_Save()" />
+    </div>
+
+    <br />*@
+
+      @using (Html.BeginForm("ProcessForm", "Scheduler", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {   
+           <div class="col-md-3">
+            Report Time :
+    <div class="input-group clockpicker" data-placement="right" data-align="top" data-autoclose="true" data-twelvehour="true">
+         @Html.TextBoxFor(m => m.Time, new { @class = "form-control"})
+    </div>
+        </div>
+          
+          <div class="col-md-3">
+              Retry Interval :
+              @Html.TextBoxFor(m=>m.Retry_Interval,new { @class = "form-control"})
+          </div>
+          
+          <div class="col-lg-12">
+            <input type="submit" value="Save" />
+        </div>
+    }
+
+    <script type="text/javascript">
+        $('.clockpicker').clockpicker()
+            .find('input').change(function () {
+                // TODO: time changed
+                console.log(this.value);
+            });
+    </script>
+
+    <script>
+        function CalltoAction_Save() {
+            var timeString = $('#timeString').val();
+            var retryCounter = $('#retryCounter').val();
+            $.ajax({
+                url: '/Scheduler/ProcessForm/',
+                data: {
+                    timeString: timeString,
+                    retryCounter: retryCounter,
+                },
+                success: function (result) {
+                    alert("Enter func");
+                    window.location.href = result;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

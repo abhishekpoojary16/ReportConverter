@@ -3,6 +3,13 @@
   <EntityContainer Name="EDI_ReportConverterEntities" p1:LazyLoadingEnabled="true">
     <EntitySet Name="ReportHeaders" EntityType="EDI_ReportConverterModel.ReportHeader" />
     <EntitySet Name="ReportMappings" EntityType="EDI_ReportConverterModel.ReportMapping" />
+    <EntitySet Name="Criteria" EntityType="EDI_ReportConverterModel.Criterion" />
+    <EntitySet Name="Data_ACK" EntityType="EDI_ReportConverterModel.Data_ACK" />
+    <EntitySet Name="Forwardings" EntityType="EDI_ReportConverterModel.Forwarding" />
+    <EntitySet Name="Master_Country" EntityType="EDI_ReportConverterModel.Master_Country" />
+    <EntitySet Name="Master_Partner" EntityType="EDI_ReportConverterModel.Master_Partner" />
+    <EntitySet Name="Master_Report" EntityType="EDI_ReportConverterModel.Master_Report" />
+    <EntitySet Name="Schedulers" EntityType="EDI_ReportConverterModel.Scheduler" />
   </EntityContainer>
   <EntityType Name="ReportHeader">
     <Key>
@@ -27,5 +34,84 @@
     <Property Name="SegmentLocation" Type="Int32" />
     <Property Name="FieldName" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
     <Property Type="String" Name="SegmentIdentifier_2" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Criterion">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="HostName" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="UserName" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="Password" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="FTPDirectory" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LocalDirectory" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="Filename" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="SeeburgerAgreement" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="Int32" Name="Scheduler_Id" />
+    <Property Type="Int32" Name="ReportHeader_Id" />
+  </EntityType>
+  <EntityType Name="Data_ACK">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="Int32" Name="Criteria_Id" />
+    <Property Type="DateTime" Name="Timestamp" Precision="3" />
+    <Property Type="DateTime" Name="Ack_Date" Precision="3" />
+    <Property Type="String" Name="Filename" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Type="Int32" Name="Control" />
+    <Property Type="Int32" Name="ActionCode" />
+    <Property Type="String" Name="Filetype" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="Status" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Forwarding">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="To_EmailId" MaxLength="5000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="CC_EmailId" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="From_EmailId" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="Host" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="BCC_EmailId" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="Email_Subject" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="Email_Body" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Master_Country">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Country" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="CountryCode" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Type="Int64" Name="TimeZone" />
+  </EntityType>
+  <EntityType Name="Master_Partner">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Partner" MaxLength="1000" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Master_Report">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="ReportCode" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ReportDescription" MaxLength="1000" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Scheduler">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="ReportName" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Type="Int32" Name="Forwarding_Id" />
+    <Property Type="String" Name="Time" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Type="Int32" Name="Retry_Interval" />
+    <Property Type="Int32" Name="Retry_Count" />
+    <Property Type="Int32" Name="Country_ID" />
+    <Property Type="Int32" Name="Status" />
   </EntityType>
 </Schema>
