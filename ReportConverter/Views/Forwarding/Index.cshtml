@@ -17,29 +17,38 @@
     @using (Html.BeginForm("ProcessForm", "Forwarding", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         <div class="col-md-12">
-            <div class="col-md-1">Report variables :</div>
+            <div class="col-md-1">Header Report variables :</div>
             <div class="col-md-10">
-                @{
-                    var var_fieldname = Session["FieldName"];
-                    if (var_fieldname != null)
-                    {
-                        List<string> FieldName = new List<string> { };
-                        
-                        
-                        //Load from Session
-                        if (Session["FieldName"] != null)
-                        {
-                            FieldName = (List<string>)Session["FieldName"];               
-                        }
-                        for (int i = 0; i < FieldName.Count; i++)
-                        {
-                   <a class="btn btn-default" role="button" draggable="true" ondragstart="onDragStart(event)" id="@(FieldName[i])">@(FieldName[i])</a>
-                        }
-                    }
-                }
                 <a class="btn btn-default" id="TimeStamp" role="button" draggable="true" ondragstart="onDragStart(event)">TimeStamp</a>
+                <a class="btn btn-default" id="Filename" role="button" draggable="true" ondragstart="onDragStart(event)">Filename</a>
             </div>
         </div>
+        
+        <div class="col-md-12">
+            <div class="col-md-1">Map Report variables :</div>
+            <div class="col-md-10">
+                @{
+        var var_fieldname = Session["FieldName"];
+        if (var_fieldname != null)
+        {
+            List<string> FieldName = new List<string> { };
+
+
+            //Load from Session
+            if (Session["FieldName"] != null)
+            {
+                FieldName = (List<string>)Session["FieldName"];
+            }
+            for (int i = 0; i < FieldName.Count; i++)
+            {
+                    <a class="btn btn-default" role="button" draggable="true" ondragstart="onDragStart(event)" id="@(FieldName[i])">@(FieldName[i])</a>
+            }
+        }
+                }
+            </div>
+        </div>
+        
+        
         
         <br />
         <br />
